@@ -1,0 +1,57 @@
+{% extends 'core/layout.html'%}
+{% load static %}
+{% block title %} - customer {% endblock %}
+
+{% block body %}
+<div class="row justify-content-center align-items-center">
+
+  <div class="col-lg-3 col-sm-12">
+    <div class="card" style="width: 18rem;">
+      <div class="card-title m-3">
+        <h4>Your Details</h4>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><i class="fa-solid fa-user"></i> {{customer1.name}}</li>
+        <li class="list-group-item"><i class="fa-solid fa-envelope"></i> {{customer1.email}}</li>
+        <li class="list-group-item"><i class="fa-solid fa-money-bill"></i> ${{customer1.account.balance}}</li>
+      </ul>
+    </div>
+    <input type="text" value="{{customer1.account.balance}}" id="account-balance" class="d-none">
+  </div>
+
+  <div class="col-lg-6 col-sm-12 my-5">
+    <!-- list -->
+    <ol class="list-group " id="listTable">
+      {% if not customer2 %}
+        <h4 class="align-self-center">No Data</h4>
+      {% else %}
+        <form method="POST" action="{% url 'transaction' customer1.id %}" id="transaction-form">
+          {% csrf_token %}
+            <div class="mb-3">
+              <label for="amount" class="form-label">Enter Amount</label>
+              <input name="amount_value" type="number" class="form-control" id="amount" aria-describedby="number" min="1" max="{{ customer1.account.balance }}">
+              <div class="form-text" id="amounthelp"></div>
+            </div>
+          <div id="customer2List">
+          {% for customer in customer2 %}
+            <li data-list-id="{{ customer.email }}" class="list-group-item blood-list">
+                <div class="mb-3 form-check d-flex w-100">
+                  <input type="checkbox" class="form-check-input person-checkbox" id="{{ customer.id }}" name="{{ customer.id }}">
+                  <label class="form-check-label mx-3" for="{{customer.id}}"><i class="fa-solid fa-user"></i> {{ customer.name }} | {{ customer.email }}</label>
+                  <span class="badge text-bg-primary rounded-pill ms-auto" data-list-id="{{ listing.id }}">🪙 {{ customer.account.balance }}</span>
+                </div>
+            </li>
+          {% endfor %}
+          </div>
+          <button id="submit-form" class="btn btn-primary my-3">Transfer</button>
+        </form>
+      {% endif %}
+    </ol>
+  </div>
+</div>
+{% endblock %}
+
+{% block script %}
+  <script src="{% static 'core/formInteraction.js'%}"></script>
+  <script src="{% static 'core/transaction.js'%}"></script>
+{% endblock %}
